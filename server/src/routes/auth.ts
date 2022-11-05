@@ -39,9 +39,9 @@ export async function authRoutes(fastify: FastifyInstance) {
       user = await prisma.user.create({
         data: {
           googleId: userInfo.id,
-          email: userInfo.email,
           name: userInfo.name,
-          picture: userInfo.picture,
+          email: userInfo.email,
+          avatarUrl: userInfo.picture,
         }
       })
     }
