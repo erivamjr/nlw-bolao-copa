@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import cors from '@fastify/cors';
+import jwt from '@fastify/jwt';
 
 import { poolRoutes } from "./routes/pool";
 import { authRoutes } from "./routes/auth";
@@ -18,6 +19,11 @@ async function bootstrap() {
     origin: true,
   });
 
+  // Em produção colocar em variável de ambiente
+  await fastify.register(jwt, {
+    secret: 'supersecret',
+  });
+
   await fastify.register(poolRoutes)
   await fastify.register(authRoutes)
   await fastify.register(gameRoutes)
@@ -31,7 +37,7 @@ async function bootstrap() {
 
 
 
-  await fastify.listen({ port: 3001, host: '0.0.0.0' });
+  await fastify.listen({ port: 3001, /*host: '0.0.0.0' */ });
 }
 
 bootstrap();
