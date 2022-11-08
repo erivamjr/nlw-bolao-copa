@@ -9,6 +9,8 @@ import { PoolCardProps } from "../components/PoolCard";
 import { PoolHeader } from "../components/PoolHeader";
 import { EmptyMyPoolList } from "../components/EmptyMyPoolList";
 import { Option } from "../components/Option";
+import { Share } from "react-native";
+import { Guesses } from "../components/Guesses";
 
 interface RouteParams {
   id: string;
@@ -44,6 +46,12 @@ export function Details() {
     }
   }
 
+  async function handleCodeShare() {
+    Share.share({
+      message: poolDetails.code,
+    });
+  }
+
   useEffect(() => {
     fetchDetails();
   }, [id]);
@@ -56,7 +64,12 @@ export function Details() {
 
   return (
     <VStack flex={1} bgColor="gray.900" >
-      <Header title="Titulo do bolão" showBackButton showShareButton />
+      <Header
+        title={poolDetails.title}
+        showBackButton
+        showShareButton
+        onShare={handleCodeShare}
+      />
       {
         poolDetails._count?.participants > 0 ?
           <VStack px={5} flex={1}>
@@ -74,6 +87,8 @@ export function Details() {
                 onPress={() => setOptionSelected('Ranking')}
               />
             </HStack>
+            <Guesses poolId={poolDetails.id} />
+
           </VStack>
           : <EmptyMyPoolList code={poolDetails.code} />
       }
