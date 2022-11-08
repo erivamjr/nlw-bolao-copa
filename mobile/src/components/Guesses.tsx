@@ -1,14 +1,16 @@
-import { Box, FlatList, useToast } from 'native-base';
+import { FlatList, useToast } from 'native-base';
 import { useEffect, useState } from 'react';
 import { api } from '../services/api';
+import { EmptyMyPoolList } from './EmptyMyPoolList';
 import { Game, GameProps } from './Game';
 import { Loading } from './Loading';
 
 interface Props {
   poolId: string;
+  code: string;
 }
 
-export function Guesses({ poolId }: Props) {
+export function Guesses({ poolId, code }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [games, setGames] = useState<GameProps[]>([]);
   const [firstTeamPoints, setFirstTeamPoints] = useState('');
@@ -21,6 +23,7 @@ export function Guesses({ poolId }: Props) {
       setIsLoading(true);
 
       const response = await api.get(`/pools/${poolId}/games`);
+
       setGames(response.data.games);
     } catch (error) {
       console.log(error);
@@ -34,7 +37,7 @@ export function Guesses({ poolId }: Props) {
     }
   }
 
-  async function handleGuessConfirm() {
+  async function handleGuessConfirm(gameId: string) {
     try {
       if (!firstTeamPoints.trim() || !secondTeamPoints.trim()) {
         return toast.show({
@@ -44,7 +47,9 @@ export function Guesses({ poolId }: Props) {
         })
       }
 
-      await api.post(`/pools/${poolId}/guesses`, {
+      console.log('CONSOLANDO BUSCA API GAMES', gameId);
+      await api.post(`/pools/${poolId}/games/${gameId}/guesses`, {
+
         firstTeamPoints: Number(firstTeamPoints),
         secondTeamPoints: Number(secondTeamPoints),
       });
@@ -88,6 +93,7 @@ export function Guesses({ poolId }: Props) {
         />
       )}
       _contentContainerStyle={{ pb: 10 }}
+      ListEmptyComponent={() => <EmptyMyPoolList code={code} />}
     />
   );
 }
